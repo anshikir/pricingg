@@ -7,6 +7,49 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 
+# 💎 1. Add the custom styling function here
+def apply_custom_style():
+    st.markdown(
+        """
+        <style>
+        .stApp {
+            background-image: url("https://images.unsplash.com/photo-1585238341986-2b61f1a1bbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: 'Arial', sans-serif;
+            color: #ffffff;
+        }
+
+        h1 {
+            color: #ffd700;
+            text-align: center;
+        }
+
+        .stFileUploader, .stButton {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .stDataFrame {
+            background-color: rgba(255, 255, 255, 0.95);
+            color: black;
+        }
+
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+# 💎 2. Call the function before UI
+apply_custom_style()
+
+# 💎 3. Then start your Streamlit app normally
+st.title("💎 Diamond Pricing Calculator")
+
+
+
 @st.cache_data
 def load_model():
     df = pd.read_csv("rough_pricing.csv", encoding='latin1', low_memory=False)
