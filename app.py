@@ -11,7 +11,7 @@ from sklearn.metrics import r2_score
 @st.cache_data
 
 def load_model():
-    df = pd.read_csv("rough_pricing.csv", encoding='latin1')
+df = pd.read_csv("rough_pricing.csv", encoding='latin1', low_memory=False)
 
     # 🛠️ Drop rows with missing target values
     df = df.dropna(subset=["Rapnet Discount %"])
