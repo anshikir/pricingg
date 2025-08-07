@@ -45,9 +45,6 @@ def apply_custom_style():
 # 💎 2. Call the function before UI
 apply_custom_style()
 
-# 💎 3. Then start your Streamlit app normally
-st.title("💎 Diamond Pricing Calculator")
-
 
 
 @st.cache_data
