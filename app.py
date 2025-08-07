@@ -22,6 +22,9 @@ rename_map.update({
     col: 'Depth %' for col in input_df.columns if col.lower().replace(" ", "") == 'depth%'
 })
 
+
+
+
 input_df.rename(columns=rename_map, inplace=True)
 
     # 🛠️ Drop rows with missing target values
@@ -37,7 +40,9 @@ df = df.dropna(subset=["Rapnet Discount %"])
     df['Table_Ideal'] = df['Table %'].between(58, 62).astype(int)
     df['Depth_Ideal'] = df['Depth %'].between(60, 62.5).astype(int)
 
-    selected_features += ['Table_Ideal', 'Depth_Ideal']
+
+
+selected_features += ['Table_Ideal', 'Depth_Ideal']
 
     X = df[selected_features]
     y = df["Rapnet Discount %"]
