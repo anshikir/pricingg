@@ -1,47 +1,27 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.model_selection import train_test_split
 
-# 💎 1. Add the custom styling function here
 def apply_custom_style():
     st.markdown(
         """
         <style>
-        .stApp {
-            background-image: url("https://images.unsplash.com/photo-1585238341986-2b61f1a1bbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80");
+        [data-testid="stAppViewContainer"] {
+            background-image: url("https://images.unsplash.com/photo-1603651602092-24659d01b2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80");
             background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
-            font-family: 'Arial', sans-serif;
-            color: #ffffff;
         }
-
-        h1 {
-            color: #ffd700;
-            text-align: center;
+        [data-testid="stAppViewContainer"]::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.15); /* semi-white overlay for readability */
+            z-index: 0;
         }
-
-        .stFileUploader, .stButton {
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            padding: 10px;
-        }
-
-        .stDataFrame {
-            background-color: rgba(255, 255, 255, 0.95);
-            color: black;
-        }
+        /* Ensure your app content stays on top */
+        .css-18e3th9 {position: relative; z-index: 1;}
 
         </style>
-        """,
-        unsafe_allow_html=True
+        """, unsafe_allow_html=True
     )
-
 # 💎 2. Call the function before UI
 apply_custom_style()
 
