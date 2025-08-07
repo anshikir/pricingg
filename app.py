@@ -12,6 +12,17 @@ from sklearn.metrics import r2_score
 
 def load_model():
     df = pd.read_csv("rough_pricing.csv", encoding='latin1', low_memory=False)
+    # Try renaming similar-looking column names to match exactly
+input_df.columns = input_df.columns.str.strip()
+
+rename_map = {
+    col: 'Table %' for col in input_df.columns if col.lower().replace(" ", "") == 'table%'
+}
+rename_map.update({
+    col: 'Depth %' for col in input_df.columns if col.lower().replace(" ", "") == 'depth%'
+})
+
+input_df.rename(columns=rename_map, inplace=True)
 
     # 🛠️ Drop rows with missing target values
     df = df.dropna(subset=["Rapnet Discount %"])
