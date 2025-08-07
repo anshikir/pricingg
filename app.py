@@ -25,7 +25,8 @@ rename_map.update({
 input_df.rename(columns=rename_map, inplace=True)
 
     # 🛠️ Drop rows with missing target values
-    df = df.dropna(subset=["Rapnet Discount %"])
+
+df = df.dropna(subset=["Rapnet Discount %"])
 
     selected_features = [
         "Weight", "Color", "Clarity", "Cut", "Polish", "Symmetry",
