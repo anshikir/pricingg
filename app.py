@@ -6,69 +6,48 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score
 
 @st.cache_data
-
 def load_model():
     df = pd.read_csv("rough_pricing.csv", encoding='latin1', low_memory=False)
-    # Try renaming similar-looking column names to match exactly
-input_df.columns = input_df.columns.str.strip()
 
-rename_map = {
-    col: 'Table %' for col in input_df.columns if col.lower().replace(" ", "") == 'table%'
-}
-rename_map.update({
-    col: 'Depth %' for col in input_df.columns if col.lower().replace(" ", "") == 'depth%'
-})
-
-
-
-
-input_df.rename(columns=rename_map, inplace=True)
-
-    # 🛠️ Drop rows with missing target values
-
-df = df.dropna(subset=["Rapnet Discount %"])
+    # Drop rows with missing target values
+    df = df.dropna(subset=["Rapnet Discount %"])
 
     selected_features = [
         "Weight", "Color", "Clarity", "Cut", "Polish", "Symmetry",
         "Table %", "Depth %", "Shape", "Lab", "Eye Clean"
     ]
 
-    # Simple feature engineering
+    # Feature engineering
     df['Table_Ideal'] = df['Table %'].between(58, 62).astype(int)
     df['Depth_Ideal'] = df['Depth %'].between(60, 62.5).astype(int)
-
-
-
-selected_features += ['Table_Ideal', 'Depth_Ideal']
+    selected_features += ['Table_Ideal', 'Depth_Ideal']
 
     X = df[selected_features]
     y = df["Rapnet Discount %"]
 
-    # Identify feature types
+    # Preprocessing
     numerical_features = X.select_dtypes(include=np.number).columns.tolist()
     categorical_features = X.select_dtypes(include='object').columns.tolist()
 
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ('num', StandardScaler(), numerical_features),
-            ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)
-        ]
-    )
+    preprocessor = ColumnTransformer([
+        ('num', StandardScaler(), numerical_features),
+        ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)
+    ])
 
     model = Pipeline([
         ('preprocessor', preprocessor),
         ('regressor', RandomForestRegressor(n_estimators=50, random_state=42))
     ])
 
-    # Train quickly on a subset of data for speed
+    # Train on subset for faster performance
     X_sample, _, y_sample, _ = train_test_split(X, y, train_size=0.2, random_state=42)
     model.fit(X_sample, y_sample)
 
     return model, selected_features
 
+# Load model and features
 model, required_features = load_model()
 
 st.title("💎 Diamond Pricing Calculator")
@@ -79,10 +58,21 @@ if uploaded_file:
     try:
         input_df = pd.read_csv(uploaded_file, encoding='latin1')
 
-        # Feature engineering on uploaded data
+        # Strip column names of spaces and fix naming issues
+        input_df.columns = input_df.columns.str.strip()
+        rename_map = {
+            col: 'Table %' for col in input_df.columns if col.lower().replace(" ", "") == 'table%'
+        }
+        rename_map.update({
+            col: 'Depth %' for col in input_df.columns if col.lower().replace(" ", "") == 'depth%'
+        })
+        input_df.rename(columns=rename_map, inplace=True)
+
+        # Feature engineering on uploaded file
         input_df['Table_Ideal'] = input_df['Table %'].between(58, 62).astype(int)
         input_df['Depth_Ideal'] = input_df['Depth %'].between(60, 62.5).astype(int)
 
+        # Fill missing required columns
         for feature in required_features:
             if feature not in input_df.columns:
                 if feature in ['Table_Ideal', 'Depth_Ideal']:
@@ -92,14 +82,18 @@ if uploaded_file:
                 else:
                     input_df[feature] = 'Unknown'
 
+        # Reorder columns
         input_df = input_df[required_features]
-        predictions = model.predict(input_df)
 
+        # Predict
+        predictions = model.predict(input_df)
         input_df["Predicted Discount %"] = predictions
 
+        # Display
         st.success("✅ Predictions completed!")
         st.dataframe(input_df)
 
+        # Download button
         csv = input_df.to_csv(index=False).encode('utf-8')
         st.download_button("Download Predictions as CSV", data=csv, file_name="diamond_predictions.csv", mime='text/csv')
 
