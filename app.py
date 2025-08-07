@@ -13,7 +13,6 @@ from sklearn.metrics import r2_score
 def load_model():
     df = pd.read_csv("rough_pricing.csv", encoding='latin1')
 
-
     # 🛠️ Drop rows with missing target values
     df = df.dropna(subset=["Rapnet Discount %"])
 
@@ -61,7 +60,7 @@ uploaded_file = st.file_uploader("Upload CSV file with diamond data", type=["csv
 
 if uploaded_file:
     try:
-        input_df = pd.read_csv(uploaded_file)
+        input_df = pd.read_csv(uploaded_file, encoding='latin1')
 
         # Feature engineering on uploaded data
         input_df['Table_Ideal'] = input_df['Table %'].between(58, 62).astype(int)
@@ -90,4 +89,4 @@ if uploaded_file:
     except Exception as e:
         st.error(f"❌ Error processing file: {e}")
 else:
-    st.info("Please upload a CSV file to get started.") 
+    st.info("Please upload a CSV file to get started.")
